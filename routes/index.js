@@ -1,6 +1,7 @@
 var express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const getWisdoms = require('../utils/getWisdoms');
+const { loadCatImage, loadDogImage } = require('../utils/loadImage');
 
 var router = express.Router();
 
@@ -33,6 +34,28 @@ const startBot = async () => {
     }
     if (tulos < 0.5) {
       bot.sendMessage(chatId, '<b>Kruuna:</b> Kruunalla kotiin :(', { parse_mode: 'HTML' });
+    }
+  });
+
+  bot.onText(/\/kissa/, async msg => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Oottele ku kuva lattaileepi');
+    try {
+      const image = await loadCatImage();
+      bot.sendPhoto(chatId, image.url);
+    } catch (error) {
+      bot.sendMessage(chatId, 'Joku meni ny rikki, kokeile vaikka uuestaa');
+    }
+  });
+  
+  bot.onText(/\/koira/, async msg => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Oottele ku kuva lattaileepi');
+    try {
+      const image = await loadDogImage();
+      bot.sendPhoto(chatId, image.url);
+    } catch (error) {
+      bot.sendMessage(chatId, 'Joku meni ny rikki, kokeile vaikka uuestaa');
     }
   });
 
