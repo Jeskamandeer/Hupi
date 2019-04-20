@@ -14,13 +14,8 @@ router.get('/', function(req, res, next) {
 
 module.exports = router;
 
-
 const token = '791725819:AAHhuu9LnSCU-hCUwT4XWqJVdYFV5GavU0w';
 const bot = new TelegramBot(token, { polling: true });
-
-//bot.on('message', (msg) => {
-//    bot.sendMessage(msg.chat.id, 'Ill have the tuna. No crust.');
-//});
 
 // /jokotai komennolla heittää joko kruunan tai klaavan
 const startBot = async () => {
@@ -28,19 +23,22 @@ const startBot = async () => {
 
   bot.onText(/\/piato/, async (msg, match) => {      const chatId = msg.chat.id;
       var num = 0;
-      if (match[1] == "h") num = 1; // HUOMENNA
-      else if (match[1] == "yh") num = 2; // YLIHUOMENNA
+      let lause = msg.text.split(" ");
+      if(lause[1] !== undefined) {
+          if (lause[1].trim() === "h") num = 1; // HUOMENNA
+          else if (lause[1].trim() === "yh") num = 2; // YLIHUOMENNA
+      };
       var obj = await semmaApi();
       var restaurant_name = obj.RestaurantName;
       var week = obj.MenusForDays;
-      var day = week[num];
+
+      var day = week[0];
       var open_time = day.LunchTime;
       var food = day.SetMenus;
 
       var dayTxt = "_Tänään_";
       if (num == 1) dayTxt = "_Huomenna_";
       else if (num == 2) dayTxt = "_Ylihuomenna_";
-
       var responseTxt = '*' + restaurant_name + '* ' + dayTxt + '\r\n';
       if (open_time !== null) {
           responseTxt += 'Lounas: ' + open_time + '\r\n';
@@ -57,7 +55,7 @@ const startBot = async () => {
 
       bot.sendMessage(chatId, responseTxt, {parse_mode: 'Markdown'});
 
-  })
+  });
 
   bot.onText(/\/jokotai/, (msg, match) => {
     const chatId = msg.chat.id;
@@ -106,7 +104,6 @@ const startBot = async () => {
       const chatId = msg.chat.id;
 
       const events = await getEvents();
-      console.log(events);
       bot.sendMessage(chatId, events, { parse_mode: 'HTML' });
   });
 
