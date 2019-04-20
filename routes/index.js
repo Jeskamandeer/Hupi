@@ -107,7 +107,7 @@ const startBot = async () => {
 
       const events = await getEvents();
       console.log(events);
-      bot.sendMessage(chatId, events.toString(), { parse_mode: 'HTML' });
+      bot.sendMessage(chatId, events, { parse_mode: 'HTML' });
   });
 
   bot.on('message', msg => {

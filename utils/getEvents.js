@@ -21,7 +21,8 @@ const getEvents = async () => {
             const capacities = [];
             
             eventList.forEach(element => {                                 //käydään läpi kaikki tapahtumat
-                element += "\n";
+                element = element.trim();
+                element += "\n  \n";
                 if(element.match(/(\([0-9]{1,}\/[0-9]{1,}\))/g)) {              //jos tapahtumassa on kanta
                     eventsWithCapacity.push(element);                           //lisätään kannallisten listalle
                     let capacity = element.match(/(\([0-9]{1,}\/[0-9]{1,}\))/g).toString().replace(/[\(\)]/g, '');     //otetaan kannan tiedot irti (osallistuneet/kapasiteetti)
@@ -37,7 +38,7 @@ const getEvents = async () => {
     } catch (error) {
         return [];
     }
-    return fullEvents;
+    return fullEvents.join('');
 
 }
 
