@@ -1,6 +1,7 @@
 var express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const getWisdoms = require('../utils/getWisdoms');
+const getEvents = require('../utils/getEvents');
 const { loadCatImage, loadDogImage } = require('../utils/loadImage');
 
 var router = express.Router();
@@ -65,6 +66,14 @@ const startBot = async () => {
     const randomWisdom = wisdoms[Math.floor(Math.random() * wisdoms.length)];
 
     bot.sendMessage(chatId, randomWisdom);
+  });
+
+  bot.onText(/\/tapahtumat/, msg => {
+    const chatId = msg.chat.id;
+
+    const events = await getEvents();
+
+    bot.sendMessage(chatId, events);
   });
 
   bot.on('message', msg => {
