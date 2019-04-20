@@ -2,6 +2,8 @@ var express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const getWisdoms = require('../utils/getWisdoms');
 const { loadCatImage, loadDogImage } = require('../utils/loadAnimalImage');
+const getEvents = require('../utils/getEvents');
+const semmaApi = require('../utils/semma');
 
 var router = express.Router();
 
@@ -23,6 +25,39 @@ const bot = new TelegramBot(token, { polling: true });
 // /jokotai komennolla heittää joko kruunan tai klaavan
 const startBot = async () => {
   const wisdoms = await getWisdoms();
+
+  bot.onText(/\/piato/, (msg, match) => {
+    const chatId = msg.chat.id;
+    var num = 0;
+    if(match[1] == "h") num = 1; // HUOMENNA
+    else if (match[1] == "yh") num = 2; // YLIHUOMENNA
+    var obj = await semmaApi();
+    var restaurant_name = obj.RestaurantName;
+    var week = obj.MenusForDays;
+    var day = week[num];
+    var open_time = day.LunchTime;
+    var food = day.SetMenus;
+    
+    var dayTxt = "_Tänään_";
+    if(num == 1) dayTxt = "_Huomenna_";
+    else if(num == 2) dayTxt = "_Ylihuomenna_";
+
+    var responseTxt = '*'+restaurant_name+'* ' + dayTxt+'\r\n';
+    if(time !== null) {
+      responseTxt += 'Lounas: '+open_time+'\r\n';
+      for(i = 0; i<food.length;i++) {
+        responseTxt += '*'+food[i].Name+'* ';
+        responseTxt += '_'+food[i].Price+'_\r\n';
+        for(y=0; y<food[i].Components.length; y++) {
+          responseTxt += food[i].Components[y].replace('*','\\*')+'\r\n';
+        }
+      }
+    } else {
+      responseTxt += "Kiinni :(";
+    }
+
+    bot.sendMessage(chatId, responseTxt, {parse_mode: 'Markdown'});
+  })
 
   bot.onText(/\/jokotai/, (msg, match) => {
     const chatId = msg.chat.id;
@@ -65,6 +100,14 @@ const startBot = async () => {
     const randomWisdom = wisdoms[Math.floor(Math.random() * wisdoms.length)];
 
     bot.sendMessage(chatId, randomWisdom);
+  });
+
+  bot.onText(/\/tapahtumat/, msg => {
+    const chatId = msg.chat.id;
+
+    const events = await getEvents();
+
+    bot.sendMessage(chatId, events);
   });
 
   bot.on('message', msg => {
