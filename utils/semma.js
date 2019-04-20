@@ -7,7 +7,7 @@ const getSemma = async () => {
     const response = await axios.get('https://www.semma.fi/modules/json/json/Index?costNumber=1408&language=fi');
     if (response.status === 200) {
       const html = response.data;
-      menu = cheerio.load(html);
+      menu = html;
     } else {
       throw new Error(`Error, response status ${response.status}`);
     }

@@ -26,37 +26,37 @@ const bot = new TelegramBot(token, { polling: true });
 const startBot = async () => {
   const wisdoms = await getWisdoms();
 
-  bot.onText(/\/piato/, (msg, match) => {
-    const chatId = msg.chat.id;
-    var num = 0;
-    if(match[1] == "h") num = 1; // HUOMENNA
-    else if (match[1] == "yh") num = 2; // YLIHUOMENNA
-    var obj = await semmaApi();
-    var restaurant_name = obj.RestaurantName;
-    var week = obj.MenusForDays;
-    var day = week[num];
-    var open_time = day.LunchTime;
-    var food = day.SetMenus;
-    
-    var dayTxt = "_Tänään_";
-    if(num == 1) dayTxt = "_Huomenna_";
-    else if(num == 2) dayTxt = "_Ylihuomenna_";
+  bot.onText(/\/piato/, async (msg, match) => {      const chatId = msg.chat.id;
+      var num = 0;
+      if (match[1] == "h") num = 1; // HUOMENNA
+      else if (match[1] == "yh") num = 2; // YLIHUOMENNA
+      var obj = await semmaApi();
+      var restaurant_name = obj.RestaurantName;
+      var week = obj.MenusForDays;
+      var day = week[num];
+      var open_time = day.LunchTime;
+      var food = day.SetMenus;
 
-    var responseTxt = '*'+restaurant_name+'* ' + dayTxt+'\r\n';
-    if(time !== null) {
-      responseTxt += 'Lounas: '+open_time+'\r\n';
-      for(i = 0; i<food.length;i++) {
-        responseTxt += '*'+food[i].Name+'* ';
-        responseTxt += '_'+food[i].Price+'_\r\n';
-        for(y=0; y<food[i].Components.length; y++) {
-          responseTxt += food[i].Components[y].replace('*','\\*')+'\r\n';
-        }
+      var dayTxt = "_Tänään_";
+      if (num == 1) dayTxt = "_Huomenna_";
+      else if (num == 2) dayTxt = "_Ylihuomenna_";
+
+      var responseTxt = '*' + restaurant_name + '* ' + dayTxt + '\r\n';
+      if (open_time !== null) {
+          responseTxt += 'Lounas: ' + open_time + '\r\n';
+          for (i = 0; i < food.length; i++) {
+              responseTxt += '*' + food[i].Name + '* ';
+              responseTxt += '_' + food[i].Price + '_\r\n';
+              for (y = 0; y < food[i].Components.length; y++) {
+                  responseTxt += food[i].Components[y].replace('*', '\\*') + '\r\n';
+              }
+          }
+      } else {
+          responseTxt += "Kiinni :(";
       }
-    } else {
-      responseTxt += "Kiinni :(";
-    }
 
-    bot.sendMessage(chatId, responseTxt, {parse_mode: 'Markdown'});
+      bot.sendMessage(chatId, responseTxt, {parse_mode: 'Markdown'});
+
   })
 
   bot.onText(/\/jokotai/, (msg, match) => {
@@ -102,12 +102,12 @@ const startBot = async () => {
     bot.sendMessage(chatId, randomWisdom);
   });
 
-  bot.onText(/\/tapahtumat/, msg => {
-    const chatId = msg.chat.id;
+  bot.onText(/\/tapahtumat/, async msg => {
+      const chatId = msg.chat.id;
 
-    const events = await getEvents();
-
-    bot.sendMessage(chatId, events);
+      const events = await getEvents();
+      console.log(events);
+      bot.sendMessage(chatId, events.toString(), { parse_mode: 'HTML' });
   });
 
   bot.on('message', msg => {
