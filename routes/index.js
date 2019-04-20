@@ -20,10 +20,10 @@ const bot = new TelegramBot(token, { polling: true });
 //    bot.sendMessage(msg.chat.id, 'Ill have the tuna. No crust.');
 //});
 
-// /jokotai komennolla heittää joko kruunan tai klaavan
 const startBot = async () => {
   const wisdoms = await getWisdoms();
 
+  //jokotai komennolla heittää joko kruunan tai klaavan
   bot.onText(/\/jokotai/, (msg, match) => {
     const chatId = msg.chat.id;
     let tulos = Math.random();
@@ -59,7 +59,8 @@ const startBot = async () => {
     }
   });
 
-  bot.onText(/\/quote/, msg => {
+  //Tulostaa satunnaisen viisauden
+  bot.onText(/\/viisaus/, msg => {
     const chatId = msg.chat.id;
 
     const randomWisdom = wisdoms[Math.floor(Math.random() * wisdoms.length)];
@@ -67,10 +68,15 @@ const startBot = async () => {
     bot.sendMessage(chatId, randomWisdom);
   });
 
+  //Erilliset komennot ilman kutsua
   bot.on('message', msg => {
     const chatId = msg.chat.id;
-
     const message = msg.text;
+
+    //Kertoo botin tekijöiden githubit
+    if(msg.text === "Ketä siin botis on?") {
+       bot.sendMessage(msg.chat.id, 'Jeskamandeer, ekkusi, lurttu, matias-kovero');
+    };
 
     //Jos lauseen keskellä on "vai" niin syöttää jomman kumman vaihtoehdon takaisin
     var taulukko = message.split(' ');
