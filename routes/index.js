@@ -1,7 +1,7 @@
 var express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const getWisdoms = require('../utils/getWisdoms');
-const { loadCatImage, loadDogImage } = require('../utils/loadImage');
+const { loadCatImage, loadDogImage } = require('../utils/loadAnimalImage');
 
 var router = express.Router();
 
