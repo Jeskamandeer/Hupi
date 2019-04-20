@@ -2,7 +2,7 @@ var express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const getWisdoms = require('../utils/getWisdoms');
 const getEvents = require('../utils/getEvents');
-const { loadCatImage, loadDogImage } = require('../utils/loadImage');
+const { loadCatImage, loadDogImage } = require('../utils/loadAnimalImage');
 const semmaApi = require('../utils/semma');
 
 var router = express.Router();
