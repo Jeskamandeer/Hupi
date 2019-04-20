@@ -92,7 +92,7 @@ const startBot = async () => {
     }
   });
 
-  bot.onText(/\/quote/, msg => {
+  bot.onText(/\/viisaus/, msg => {
     const chatId = msg.chat.id;
 
     const randomWisdom = wisdoms[Math.floor(Math.random() * wisdoms.length)];
