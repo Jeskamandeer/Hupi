@@ -4,7 +4,7 @@ const getWisdoms = require('../utils/getWisdoms');
 const { loadCatImage, loadDogImage } = require('../utils/loadAnimalImage');
 const getEvents = require('../utils/getEvents');
 const semmaApi = require('../utils/semma');
-const getFullEvents = require('../util/fullEvents');
+const getFullEvents = require('../utils/fullEvents');
 
 var router = express.Router();
 
@@ -106,11 +106,11 @@ const startBot = async () => {
     responseTxt = "";
     const events = await getFullEvents();
     //console.log(events);
-    for(var event of events) {
-      responseTxt += '*'+event.name+' '+event.maara+'*\r\n'
-      responseTxt += '_'+event.pvm+' '+event.aika+'_\r\n';
+    for(var event of events.Tapahtumat) {
+      responseTxt += '*'+event.nimi+' '+event.maara+'*\r\n'
+      responseTxt += '_'+event.pvm+' '+event.aika+'_\r\n\r\n';
     };
-    bot.sendMessage(chatId, events, { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, responseTxt, { parse_mode: 'Markdown' });
   });
 
   bot.on('message', msg => {
