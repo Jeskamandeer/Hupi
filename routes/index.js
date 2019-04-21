@@ -5,6 +5,8 @@ const { loadCatImage, loadDogImage } = require('../utils/loadAnimalImage');
 const getEvents = require('../utils/getEvents');
 const semmaApi = require('../utils/semma');
 const getFullEvents = require('../utils/fullEvents');
+const readline = require('readline');
+const fs = require('fs');
 
 var router = express.Router();
 
@@ -138,30 +140,40 @@ const startBot = async () => {
   });
 };
 
-bot.onText(/\/laulu(.+)/, (msg, match) => {
+bot.onText(/\/laulu(.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
 
-    const readline = require('readline');
-    const fs = require('fs');
-
-// create instance of readline
-// each instance is associated with single input stream
+    let tulos = "Ei ole";
     let rl = readline.createInterface({
-        input: fs.createReadStream('laulukirja.txt')
+        input: fs.createReadStream('laulukirja.txt', { encoding: 'latin1' })
     });
-
     let line_no = 0;
-
-// event is emitted after each line
-    rl.on('line', function(line) {
+    let loytyi = 0;
+    rl.on('line', function (line) {
         line_no++;
-        let haku = ". " + match;
-        console.log(haku);
-    });
+        console.log(line);
 
-// end
-    rl.on('close', function(line) {
-        console.log('Total lines : ' + line_no);
+        let haku = "." + match[1];
+        if (line.includes("------")) {
+            loytyi = 0;
+        }
+        if (line.toLowerCase().includes(haku)) {
+            loytyi = 1;
+            tulos = " ";
+        }
+        ;
+        if (loytyi == 1) {
+            tulos += line + "\n";
+        }
     });
+    // end
+    rl.on('close', function (line) {
+        bot.sendMessage(chatId, tulos);
+        console.log(tulos);
+
+    });
+ //   const laulu = getLaulut();
+
 });
 
 startBot();
